@@ -1,0 +1,22 @@
+# Local user configuration and runtime data
+data/toolbox.ini
+data/*.local.ini
+
+# Test outputs, logs and debug captures
+tests/output/
+*.log
+*.stderr
+*.stdout
+
+# Historical backups and scratch files
+backup/
+
+# OS and Editor generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.vscode/
+.idea/
+*.tmp
+*.bak

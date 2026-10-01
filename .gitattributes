@@ -1,0 +1,5 @@
+# Preserve CRLF line endings on Windows for AutoHotkey and config files
+* text=auto eol=crlf
+*.ahk text eol=crlf
+*.ini text eol=crlf
+*.md text eol=crlf
