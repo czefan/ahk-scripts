@@ -151,8 +151,7 @@ class CodexRetry {
     }
 
     TryContinue(root, hwnd, backgroundHidden := false) {
-        buttons := root.FindElements({Type: "Button", Name: this.settings["RetryName"],
-            and: {ClassName: this.settings["RetryClass"], mm: 2}})
+        buttons := root.FindElements({Type: "Button", ClassName: this.settings["RetryClass"], mm: 2})
         if buttons.Length != 1 {
             this.lastButton := ""
             this.lastStatus := "没有唯一的继续按钮，跳过"
@@ -160,18 +159,31 @@ class CodexRetry {
         }
         button := buttons[1]
         ; 隐藏整个窗口时 IsOffscreen 自然为真，不能因此拒绝可用的后台按钮。
-        if button.Name != this.settings["RetryName"] || !button.IsEnabled || (button.IsOffscreen && !backgroundHidden)
+        if !this.IsContinueButton(button.Name) || !button.IsEnabled || (button.IsOffscreen && !backgroundHidden)
             return false
         identity := hwnd ":" button.RuntimeId
         if identity = this.lastButton || !button.IsInvokePatternAvailable
             return false
         ; 查询期间按钮可能已变成“停止”；调用前再核对一次，缩小状态变化的误触窗口。
-        if button.Name != this.settings["RetryName"] || !button.IsEnabled
+        if !this.IsContinueButton(button.Name) || !button.IsEnabled
             return false
         ; 失败后也不反复触发同一按钮；观察到按钮消失或身份变化后才重新允许。
         this.lastButton := identity
         button.Invoke()
         this.lastStatus := "已调用继续按钮"
         return true
+    }
+
+    IsContinueButton(name) {
+        trimmed := Trim(name)
+        if trimmed = "停止" || trimmed = "Stop" || trimmed = ""
+            return false
+        if trimmed = this.settings["RetryName"]
+            return true
+        for target in ["继续", "继续生成", "Resume", "Continue", "Retry"] {
+            if StrCompare(trimmed, target, false) = 0
+                return true
+        }
+        return false
     }
 }
